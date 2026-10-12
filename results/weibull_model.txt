@@ -1,0 +1,21 @@
+
+model {
+    for (i in 1:N) {
+        loglik[i] <- event[i] * (
+            log(lambda) + log(k) +
+            (k - 1) * log(t[i])
+        ) - lambda * pow(t[i], k)
+
+        phi[i] <- 1000 - loglik[i]
+        zeros[i] ~ dpois(phi[i])
+    }
+
+    # Priors (initial choices; assess sensitivity later)
+    k ~ dgamma(1.1, 1)
+    lambda ~ dgamma(2, 20)
+
+    # Posterior quantities
+    S12 <- exp(-lambda * pow(12, k))
+    median <- pow(log(2) / lambda, 1 / k)
+}
+
